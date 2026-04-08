@@ -1,6 +1,11 @@
 # Learning materials
 materials/
+docs/
 
 # VS Code
 *.code-workspace
 .vscode/
+
+# Secrets
+secrets/
+
