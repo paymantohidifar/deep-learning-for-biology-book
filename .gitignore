@@ -8,6 +8,7 @@ docs/
 
 # Secrets
 secrets/
+.env
 
 # pixi environments
 .pixi/*
