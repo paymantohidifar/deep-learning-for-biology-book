@@ -9,3 +9,6 @@ docs/
 # Secrets
 secrets/
 
+# pixi environments
+.pixi/*
+!.pixi/config.toml
