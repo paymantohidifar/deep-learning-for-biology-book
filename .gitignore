@@ -1,6 +1,6 @@
 # Learning materials
-materials/
-docs/
+materials/*
+docs/*
 
 # VS Code
 *.code-workspace
