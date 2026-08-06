@@ -6,6 +6,9 @@ docs/*
 *.code-workspace
 .vscode/
 
+#Python
+__pycache__/
+
 # Secrets
 secrets/
 .env
