@@ -83,8 +83,11 @@ explicit = true
 torch = [{ index = "pytorch-cpu", extra = "proteins-cpu" }, { index = "pytorch-cpu", extra = "graphs-cpu" }]
 torchvision = [{ index = "pytorch-cpu", extra = "proteins-cpu" }]
 
+[project.scripts]
+dlfb-provision = "dlfb.provision:app"
+
 [tool.hatch.build.targets.wheel]
-packages = ["dlfb"]
+packages = ["src/dlfb"]
 
 # --- Pixi Configuration (read by local Pixi installations) ---
 [tool.pixi.workspace]
