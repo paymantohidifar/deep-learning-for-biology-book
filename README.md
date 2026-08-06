@@ -48,6 +48,7 @@ If you spot a typographical error, discover an incorrect tensor operation, or ha
 ## Licensing
 
 This project's notes and codebase additions are licensed under the [MIT License](./LICENSE).
+The original source code in `src/dlfb` is licensed under the Apache 2.0 License.
 
 ---
 
