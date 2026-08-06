@@ -3,140 +3,188 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [project]
-name = "pfdl"
-version = "0.1.1"
-description = "Companion Library for Deep Learning for Biology"
-readme = "README.md"
-requires-python = ">=3.11.*"
-authors = [
-    {name = "Charles Ravarani", email = "c.ravarani@gmail.com"},
-  {name = "Natasha Latysheva", email = "nslatysheva@gmail.com"},
-]
-license = { text = "MIT" }
-
-# Base Dependencies (CPU & GPU Shared)
+name = "dlfb"
+version = "0.1.0"
+description = "Personal notes for Deep Learning for Biology Book"
+requires-python = ">=3.11,<3.12"
 dependencies = [
-    "numpy>=2.2.0",
-    "pandas>=2.2.0",
-    "scikit-learn>=1.5.0",
-    "matplotlib>=3.10.0",
-    "seaborn>=0.13.2",
-    "adjusttext>=1.3.0",
-    "flax>=0.10.0",
-    "jax>=0.10.0",
-    "jaxlib>=0.10.0",
-    "triton>=3.0.0; sys_platform == 'linux'", # Triton is only supported natively on Linux
-    "ml-dtypes>=0.5.0",
-    "tensorstore>=0.1.70",
-    "orbax-checkpoint>=0.11.0",
-    "optax>=0.2.0",
-    "click<9.0",
-    "typer>=0.12.0",
-    "ipinfo>=5.1.0",
-    "google-cloud-storage>=3.0.0",
-    "parfive>=2.2.0",
-    "python-dotenv>=1.2.2",
-    "biopython>=1.85",
-    "obonet>=1.0.0",
-    "datasets>=4.0.0",
-    "requests>=2.28",
-    "transformers>=4.54.0",
-    "ipykernel>=7.3.0",
-    "pixi-kernel>=0.1.0",
-    "jupyter>=1.1.1",
-    "zarr>=3.1.6",
+    "numpy==2.1.2",
+    "pandas==2.2.2",
+    "scikit-learn==1.4.2",
+    "matplotlib==3.10.1",
+    "seaborn==0.13.2",
+    "pixi-kernel",
+    "jupyter>=1.1.1,<2",
+    "adjusttext==1.3.0",
+    "flax==0.10.4",
+    "jax==0.5.1",
+    "jaxlib==0.5.1",
+    "triton>3",
+    "ml-dtypes==0.5.1",
+    "tensorstore==0.1.72",
+    "orbax-checkpoint==0.11.9",
+    "optax==0.2.4",
+    "click<8.2",
+    "typer==0.7.0",
+    "ipinfo==5.1.1",
+    "google-cloud-storage==3.0.0",
+    "parfive==2.2.0",
+    "types-tqdm==4.67.0.20250516",
+    "types-tensorflow==2.18.0.20250516",
+    "pandas-stubs==2.2.3.250527",
+    "types-seaborn==0.13.2.20250516",
+    "types-networkx==3.5.0.20250610",
+    "scipy-stubs==1.15.3.0",
+    "python-dotenv>=1.2.2,<2",
 ]
 
-# Mutually Exclusive Hardware Accel Groups and Dev Utilities
 [project.optional-dependencies]
-cpu = [
+proteins = [
+    "biopython==1.85",
+    "py3dmol==2.1.0",
+    "obonet==1.0.0",
+    "datasets==2.19.1",
+    "transformers==4.49.0",
+    "tensorflow==2.19.0",
+    "tensorflow-datasets==4.9.8",
     "torch==2.6.0",
     "torchvision==0.21.0",
-    "torchaudio==2.6.0",
 ]
-gpu = [
+proteins-cpu = [
+    "biopython==1.85",
+    "py3dmol==2.1.0",
+    "obonet==1.0.0",
+    "datasets==2.19.1",
+    "transformers==4.49.0",
+    "tensorflow==2.19.0",
+    "tensorflow-datasets==4.9.8",
     "torch==2.6.0",
     "torchvision==0.21.0",
-    "torchaudio==2.6.0",
-    # Platform Markers ensure these ONLY resolve on Linux x86_64 systems to prevent Win/Mac resolution errors
-    "jax-cuda12-pjrt>=0.10.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
-    "jax-cuda12-plugin>=0.10.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
 ]
-dev = [
-    "ruff>=0.5.0",
-    "pytest>=8.2.0",
-]
+cancer = ["dm-pix==0.4.4", "transformers==4.49.0"]
+graphs = ["ogb==1.3.6", "jraph==0.0.6.dev0", "ml-collections==0.1.1", "torch==2.10.0"]
+graphs-cpu = ["ogb==1.3.6", "jraph==0.0.6.dev0", "ml-collections==0.1.1", "torch==2.10.0"]
+localization = ["umap-learn==0.5.6"]
+gpu = ["jax-cuda12-pjrt==0.5.1", "jax-cuda12-plugin==0.5.1"]
 
-# Local packages to include in the wheel distribution
-[tool.hatch.build.targets.wheel]
-packages = ["src/pfdl"]
-
-# --- UV Hardware Resolver Indexing ---
+# --- UV index config: routes torch to CPU-only wheels for the "-cpu" extras ---
 [tool.uv]
-conflicts = [[{ extra = "cpu" }, { extra = "gpu" }]] # Directs uv not to compile both extras into the same environment
+conflicts = [
+    [{ extra = "proteins" }, { extra = "proteins-cpu" }],
+    [{ extra = "graphs" }, { extra = "graphs-cpu" }],
+]
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
-[[tool.uv.index]]
-name = "pytorch-gpu"
-url = "https://download.pytorch.org/whl/cu124"
-explicit = true
-
 [tool.uv.sources]
-torch = [
-    { index = "pytorch-cpu", extra = "cpu" },
-    { index = "pytorch-gpu", extra = "gpu" },
-]
-torchvision = [
-    { index = "pytorch-cpu", extra = "cpu" },
-    { index = "pytorch-gpu", extra = "gpu" },
-]
-torchaudio = [
-    { index = "pytorch-cpu", extra = "cpu" },
-    { index = "pytorch-gpu", extra = "gpu" },
-]
+torch = [{ index = "pytorch-cpu", extra = "proteins-cpu" }, { index = "pytorch-cpu", extra = "graphs-cpu" }]
+torchvision = [{ index = "pytorch-cpu", extra = "proteins-cpu" }]
 
-# --- Ruff configuration ---
-[tool.ruff]
-line-length = 110
-target-version = "py311"
+[tool.hatch.build.targets.wheel]
+packages = ["dlfb"]
 
-# --- Pixi Configuration Hook (Read ONLY by local Pixi installations) ---
+# --- Pixi Configuration (read by local Pixi installations) ---
 [tool.pixi.workspace]
 channels = ["conda-forge"]
-platforms = ["linux-64", "win-64", "osx-arm64"]
-
-[tool.pixi.workspace.pypi-options]
-extra-index-urls = [
-    "https://download.pytorch.org/whl/cpu",
-    "https://download.pytorch.org/whl/cu124"
-]
+platforms = ["linux-64"]
 
 [tool.pixi.dependencies]
 python = "3.11.*"
 
-[tool.pixi.pypi-dependencies]
-pfdl = { path = ".", editable = true }
+[tool.pixi.workspace.pypi-options]
+# Explicit transitive constraint overrides targeting upstream HuggingFace & Traitlets versioning leaks
+dependency-overrides = { "traitlets" = "==5.7.1", "huggingface-hub" = "==0.36.0" }
 
-[tool.pixi.pypi-options]
-index-strategy = "unsafe-best-match"
+[tool.pixi.feature.base.dependencies]
+numpy = "==2.1.2"
+pandas = "==2.2.2"
+scikit-learn = "==1.4.2"
+matplotlib = "==3.10.1"
+seaborn = "==0.13.2"
+pixi-kernel = "*"
+jupyter = ">=1.1.1,<2"
 
-[tool.pixi.feature.cpu]
-pypi-dependencies = { torch = { version = "==2.6.0" }, torchvision = { version = "==0.21.0" }, torchaudio = { version = "==2.6.0" } }
+[tool.pixi.feature.base.pypi-dependencies]
+adjusttext = "==1.3.0"
+flax = "==0.10.4"
+jax = "==0.5.1"
+jaxlib = "==0.5.1"
+triton = ">3"
+ml-dtypes = "==0.5.1"
+tensorstore = "==0.1.72"
+orbax-checkpoint = "==0.11.9"
+optax = "==0.2.4"
+click = "<8.2"
+typer = "==0.7.0"
+ipinfo = "==5.1.1"
+google-cloud-storage = "==3.0.0"
+parfive = "==2.2.0"
+types-tqdm = "==4.67.0.20250516"
+types-tensorflow = "==2.18.0.20250516"
+pandas-stubs = "==2.2.3.250527"
+types-seaborn = "==0.13.2.20250516"
+types-networkx = "==3.5.0.20250610"
+scipy-stubs = "==1.15.3.0"
+python-dotenv = ">=1.2.2, <2"
+dlfb = { path = ".", editable = true }
 
-[tool.pixi.feature.gpu]
-pypi-dependencies = { torch = { version = "==2.6.0" }, torchvision = { version = "==0.21.0" }, torchaudio = { version = "==2.6.0" } }
+# Deps shared by the GPU and CPU proteins environments (everything except torch/torchvision)
+[tool.pixi.feature.proteins-common.dependencies]
+biopython = "==1.85"
 
-[tool.pixi.feature.dev]
-pypi-dependencies = { ruff = ">=0.5.0", pytest = ">=8.2.0" }
+[tool.pixi.feature.proteins-common.pypi-dependencies]
+py3dmol = "==2.1.0"
+obonet = "==1.0.0"
+datasets = "==2.19.1"
+transformers = "==4.49.0"
+tensorflow = "==2.19.0"
+tensorflow-datasets = "==4.9.8"
+
+# torch/torchvision resolved from the default (CUDA-enabled) wheels, paired with the "gpu" feature
+[tool.pixi.feature.proteins.pypi-dependencies]
+torch = "==2.6.0"
+torchvision = "==0.21.0"
+
+# torch/torchvision pinned to PyTorch's CPU-only wheel index so no CUDA binaries are pulled in
+[tool.pixi.feature.proteins-cpu.pypi-dependencies]
+torch = { version = "==2.6.0", index = "https://download.pytorch.org/whl/cpu" }
+torchvision = { version = "==0.21.0", index = "https://download.pytorch.org/whl/cpu" }
+
+[tool.pixi.feature.cancer.pypi-dependencies]
+dm-pix = "==0.4.4"
+transformers = "==4.49.0"
+
+[tool.pixi.feature.graphs-common.pypi-dependencies]
+ogb = "==1.3.6"
+jraph = "==0.0.6.dev0"
+ml-collections = "==0.1.1"
+
+# ogb transitively requires torch; pin it explicitly so the CUDA vs. CPU wheel is under our control
+[tool.pixi.feature.graphs.pypi-dependencies]
+torch = "==2.10.0"
+
+[tool.pixi.feature.graphs-cpu.pypi-dependencies]
+torch = { version = "==2.10.0", index = "https://download.pytorch.org/whl/cpu" }
+
+[tool.pixi.feature.localization.pypi-dependencies]
+umap-learn = "==0.5.6"
+
+[tool.pixi.feature.gpu.pypi-dependencies]
+jax-cuda12-pjrt = "==0.5.1"
+jax-cuda12-plugin = "==0.5.1"
 
 [tool.pixi.environments]
-default = ["cpu", "dev"]  # Standard local install defaults to clean CPU + Dev
-gpu-env = ["gpu", "dev"]  # GPU setup activates the full CUDA framework pipeline
-
-[tool.pixi.tasks]
-test = "pytest"
-lint = "ruff check ."
+default = { features = ["base"], no-default-feature = false }
+proteins = { features = ["base", "proteins-common", "proteins", "gpu"], no-default-feature = false }
+proteins-cpu = { features = ["base", "proteins-common", "proteins-cpu"], no-default-feature = false }
+dna = { features = ["base", "gpu"], no-default-feature = false }
+dna-cpu = { features = ["base"], no-default-feature = false }
+graphs = { features = ["base", "graphs-common", "graphs", "gpu"], no-default-feature = false }
+graphs-cpu = { features = ["base", "graphs-common", "graphs-cpu"], no-default-feature = false }
+cancer = { features = ["base", "cancer", "gpu"], no-default-feature = false }
+cancer-cpu = { features = ["base", "cancer"], no-default-feature = false }
+localization = { features = ["base", "localization", "gpu"], no-default-feature = false }
+localization-cpu = { features = ["base", "localization"], no-default-feature = false }

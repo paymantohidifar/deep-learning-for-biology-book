@@ -6,7 +6,7 @@ Welcome! This repository serves as a centralized hub for my personal study notes
 
 The purpose of this space is to provide a structured, easily accessible technical reference for AIxBio students and practitioners. It is designed to facilitate quick reviews of core concepts, algorithmic code snippets, and the deep learning models covered throughout the book.
 
-* **Environment Orchestration:** A comprehensive, lean configuration guide to provision deterministic local runtime environments using `pixi`. For setup instructions, please refer to the [Environment Installation Guide](./INSTALL.md).
+* **Environment Orchestration:** A comprehensive, lean configuration guide to provision deterministic local runtime environments using `pixi` (configured via `pyproject.toml`), with both GPU and CPU-only variants for every chapter. `uv`/`pip` installs are also supported as an alternative. For setup instructions, please refer to the [Environment Installation Guide](./INSTALL.md).
 * **Cloud Runtimes:** All main notebooks include direct links to launch the execution context immediately on Google Colab.
 
 > [!IMPORTANT]
