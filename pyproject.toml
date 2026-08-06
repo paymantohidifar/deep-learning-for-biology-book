@@ -68,10 +68,17 @@ localization = ["umap-learn==0.5.6"]
 gpu = ["jax-cuda12-pjrt==0.5.1", "jax-cuda12-plugin==0.5.1"]
 
 # --- UV index config: routes torch to CPU-only wheels for the "-cpu" extras ---
+# Every extra below pins its own torch version, so each pair must be mutually
+# exclusive -- otherwise uv's universal resolver tries to combine them into a
+# single lock and fails on the conflicting torch pins.
 [tool.uv]
 conflicts = [
     [{ extra = "proteins" }, { extra = "proteins-cpu" }],
     [{ extra = "graphs" }, { extra = "graphs-cpu" }],
+    [{ extra = "proteins" }, { extra = "graphs" }],
+    [{ extra = "proteins" }, { extra = "graphs-cpu" }],
+    [{ extra = "proteins-cpu" }, { extra = "graphs" }],
+    [{ extra = "proteins-cpu" }, { extra = "graphs-cpu" }],
 ]
 
 [[tool.uv.index]]
