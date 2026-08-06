@@ -4721,7 +4721,7 @@ packages:
 - pypi: ./
   name: dlfb
   version: 0.1.0
-  sha256: 03d741ee66da04d41fb94c0d493a4dd3a4138a75bc8157799e6a69274b65890e
+  sha256: 9345f6c0005e1fb5def06c8c20accd8f5c9112d8354377b82d6adf91cfe239b1
   requires_dist:
   - numpy==2.1.2
   - pandas==2.2.2
