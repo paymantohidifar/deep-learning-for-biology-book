@@ -167,6 +167,9 @@ torchvision = { version = "==0.21.0", index = "https://download.pytorch.org/whl/
 dm-pix = "==0.4.4"
 transformers = "==4.49.0"
 
+[tool.pixi.feature.dna.pypi-dependencies]
+tensorflow= "==2.19.0"
+
 [tool.pixi.feature.graphs-common.pypi-dependencies]
 ogb = "==1.3.6"
 jraph = "==0.0.6.dev0"
@@ -190,8 +193,8 @@ jax-cuda12-plugin = "==0.5.1"
 default = { features = ["base"], no-default-feature = false }
 proteins = { features = ["base", "proteins-common", "proteins", "gpu"], no-default-feature = false }
 proteins-cpu = { features = ["base", "proteins-common", "proteins-cpu"], no-default-feature = false }
-dna = { features = ["base", "gpu"], no-default-feature = false }
-dna-cpu = { features = ["base"], no-default-feature = false }
+dna = { features = ["base", "dna", "gpu"], no-default-feature = false }
+dna-cpu = { features = ["base", "dna"], no-default-feature = false }
 graphs = { features = ["base", "graphs-common", "graphs", "gpu"], no-default-feature = false }
 graphs-cpu = { features = ["base", "graphs-common", "graphs-cpu"], no-default-feature = false }
 cancer = { features = ["base", "cancer", "gpu"], no-default-feature = false }
