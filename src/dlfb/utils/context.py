@@ -14,13 +14,21 @@ def ensure_context() -> None:
       return
 
   context = detect_context()
+
+  #----- PATCH 1 by Payman Tohidifar -----
+  # This patch enabales local access to dataset
+  cwd = os.getcwd()
+  root = os.path.dirname(cwd) if os.path.basename(cwd) == "notebooks" else cwd
   assets_dir = {
-    "local": "/content/drive/MyDrive/dlfb/assets",
+    # "local": "/content/drive/MyDrive/dlfb/assets",
+    "local": root+"/data",
     "colab": "/content/assets",
   }[context]
   if not os.path.exists(assets_dir):
     raise FileNotFoundError("Could not find the assets directory.")
   os.environ["ASSETS_DIR"] = assets_dir
+
+  #----- END OF PATCH 1 -------
 
 
 def detect_context() -> str:
