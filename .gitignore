@@ -1,12 +1,11 @@
 # Learning materials
 materials/*
-docs/*
 
 # VS Code
 *.code-workspace
 .vscode/
 
-#Python
+# Python
 __pycache__/
 
 # Secrets
@@ -20,3 +19,8 @@ secrets/
 # data
 data/*
 !data/.gitkeep
+
+# documents
+docs/*
+!docs/.gitkeep
+!docs/list_of_papers.md
