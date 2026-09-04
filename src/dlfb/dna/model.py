@@ -79,12 +79,8 @@ class ConvModelV2(nn.Module):
     x = nn.Conv(
       features=self.conv_filters, kernel_size=self.kernel_size, padding="SAME"
     )(x)
-    # NOTE: The nn.BatchNorm should come before nn.gelu to have the same setup
-    #       as the first layer (see above). In a future release this will be
-    #       updated.
-    #       -> https://github.com/orgs/deep-learning-for-biology/discussions/10
-    x = nn.gelu(x)
     x = nn.BatchNorm(use_running_average=not is_training)(x)
+    x = nn.gelu(x)
     x = nn.max_pool(x, window_shape=(2,), strides=(2,))
 
     # Flatten the values before passing them to the dense layers.
@@ -93,12 +89,12 @@ class ConvModelV2(nn.Module):
     # First dense layer.
     x = nn.Dense(self.dense_units)(x)
     x = nn.gelu(x)
-    x = nn.Dropout(rate=self.dropout_rate)(x, deterministic=not is_training)
+    x = nn.Dropout(rate=self.dropout_rate, deterministic=not is_training)(x)
 
     # Second dense layer.
     x = nn.Dense(self.dense_units // 2)(x)
     x = nn.gelu(x)
-    x = nn.Dropout(rate=self.dropout_rate)(x, deterministic=not is_training)
+    x = nn.Dropout(rate=self.dropout_rate, deterministic=not is_training)(x)
 
     # Output layer (single unit for binary classification).
     return nn.Dense(1)(x)
@@ -106,12 +102,17 @@ class ConvModelV2(nn.Module):
   def create_train_state(self, rng: jax.Array, dummy_input, tx):
     """Initializes model parameters and returns a train state for training."""
     rng, rng_init, rng_dropout = jax.random.split(rng, 3)
-    variables = self.init(rng_init, dummy_input)
+    # variables = self.init(rng_init, dummy_input)
+    variables = self.init(
+            rng_init,
+            dummy_input,
+            is_training=False
+        )
     state = TrainStateWithBatchNorm.create(
       apply_fn=self.apply,
       tx=tx,
       params=variables["params"],
-      batch_stats=variables["batch_stats"],
+      batch_stats=variables.get("batch_stats", {}),
       key=rng_dropout,
     )
     return state
